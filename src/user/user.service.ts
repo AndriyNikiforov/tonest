@@ -1,26 +1,43 @@
-import { Injectable } from '@nestjs/common';
+import { DeleteResult, UpdateResult } from 'typeorm';
+import { Inject, Injectable } from '@nestjs/common';
+import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserServiceInterface } from './interfaces/user.service.interface';
+import { UserRepositoryInterface } from './interfaces/user.repository.interface';
 
 @Injectable()
-export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+export class UserService implements UserServiceInterface {
+  constructor(
+    @Inject('UserRepositoryInterface')
+    private readonly userRepository: UserRepositoryInterface,
+  ) {}
+
+  public async create(createUserDto: CreateUserDto): Promise<User> {
+    let user: any = new User();
+    user = { ...createUserDto };
+    const result = await this.userRepository.create(user);
+
+    return result;
   }
 
-  findAll() {
-    return `This action returns all user`;
+  public async findAll(): Promise<User[]> {
+    const result: User[] = await this.userRepository.findAll();
+    return result;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  public async findOne(id: number): Promise<User> {
+    return await this.userRepository.findOneById(id);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  public async update(
+    id: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UpdateResult> {
+    return await this.userRepository.update(id, updateUserDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  public async remove(id: number): Promise<DeleteResult> {
+    return await this.userRepository.remove(id);
   }
 }
