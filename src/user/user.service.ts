@@ -16,9 +16,8 @@ export class UserService implements UserServiceInterface {
   public async create(createUserDto: CreateUserDto): Promise<User> {
     let user: any = new User();
     user = { ...createUserDto };
-    const result = await this.userRepository.create(user);
 
-    return result;
+    return await this.userRepository.create(user);
   }
 
   public async findAll(): Promise<User[]> {
@@ -28,6 +27,12 @@ export class UserService implements UserServiceInterface {
 
   public async findOne(id: number): Promise<User> {
     return await this.userRepository.findOneById(id);
+  }
+
+  public async findByEmail(email: string): Promise<User> {
+    return await this.userRepository.findByCondition({
+      email: email,
+    });
   }
 
   public async update(
