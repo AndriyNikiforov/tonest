@@ -21,7 +21,9 @@ export class AuthService {
     return user;
   }
 
-  async login({ email, password }: LoginUserDto) {
-
+  async login(payloadData: LoginUserDto) {
+    return {
+      access_token: this.jwtService.sign(payloadData),
+    };
   }
 }
